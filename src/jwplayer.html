@@ -1,0 +1,115 @@
+<!DOCTYPE html5>
+<html>
+
+<head>
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        #mediaplayer {
+            height: 100%;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            background-color: red
+        }
+    </style>
+     <script src="https://cdn.jwplayer.com/libraries/g67ksCDX.js">
+     </script>
+</head>
+
+<body>
+    <div id='myPlayer'></div>
+
+
+    <script type='text/javascript'>
+        let autostart = true;
+        let floating = true;
+        let responsive = true;
+        let width = "100%";
+
+        let tag = "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator="
+
+        let playlist = 'https://videos-fms.jwpsrv.com/0_604f583f_0xd11fa83ed701b67aa2a74af288771be431369921/content/conversions/LOPLPiDX/videos/hWF9vG66-24721146.mp4';
+
+        let advertising = {
+            "client": "vast",
+            "adscheduleid": "Az87bY12",
+            "schedule": [
+                {
+                    "offset": "pre",
+                    "tag": "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator="
+                },
+                {
+                    "offset": "25%",
+                    "tag": "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator="
+                },
+            ]
+        }
+
+        try
+       { let playerInstance = jwplayer('myPlayer').setup({
+            autostart,
+            floating,
+            playlist,
+            advertising,
+            responsive,
+            aspectratio: "16:9",
+            width
+        });}catch(e){
+            console.error(e)
+        }
+
+
+
+        playerInstance.on('adPlay', function () {
+            disableButton('Ad playing, please wait (or skip it)')
+        });
+
+        playerInstance.on('adPause', function () {
+            disableButton('Unpause the ad to continue.')
+        });
+
+        playerInstance.once('play', function () {
+            let cookieData = Cookies.get('resumevideodata');
+            if (!cookieData) {
+                return;
+            }
+            const [resumeAt, duration] = cookieData.split(':');
+
+            if (resumeAt < duration) {
+                playerInstance.seek(resumeAt);
+                return;
+            }
+        });
+
+        playerInstance.on('time', function (e) {
+            Cookies.set('resumevideodata', `${Math.floor(e.position)}:${playerInstance.getDuration()}`);
+        });
+
+        function triggerAd() {
+            playerInstance.playAd(tag);
+        };
+
+        function resizePlayer(width, height) {
+            playerInstance.resize(width, width);
+        }
+
+        function play() {
+            playerInstance.play(true);
+        }
+
+        function pause() {
+            playerInstance.pause(true);
+        }
+
+    </script>
+
+</body>
+
+</html>
