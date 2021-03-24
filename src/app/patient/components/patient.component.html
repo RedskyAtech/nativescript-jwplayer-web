@@ -1,12 +1,17 @@
 <ActionBar title="Styling" visibility="collapsed">
 </ActionBar>
-<!-- <ScrollView> -->
 
-<GridLayout loaded="pageLoaded">
-    <WebView [src]="webViewSrc" (loadFinished)="lf()" (loadStarted)="ls()">
-    </WebView>
+<StackLayout>
 
-<!-- <label textWrap="true" width="200" [text]="n"></label> -->
 
+
+<StackLayout height="300" >
+    <Button (tap)="triggerAd()" text="pl"></Button>
+    <Button (tap)="pause()" text="pa"></Button>
+    <Button (tap)="resizePlayer()" text="pa"></Button>
+</StackLayout>
+
+<GridLayout width="100%" backgroundColor="red" opacity="0.5"  (loaded)="pageLoaded($event)">
+    <JWPlayerWeb [src]="srcN" (loaded)="onLoadd($event)"></JWPlayerWeb>
 </GridLayout>
-<!-- </ScrollView> -->
+</StackLayout>
