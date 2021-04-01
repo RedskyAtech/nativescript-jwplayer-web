@@ -2,16 +2,7 @@
 </ActionBar>
 
 <StackLayout>
-
-
-
-<StackLayout height="300" >
-    <Button (tap)="triggerAd()" text="pl"></Button>
-    <Button (tap)="pause()" text="pa"></Button>
-    <Button (tap)="resizePlayer()" text="pa"></Button>
-</StackLayout>
-
-<GridLayout width="100%" backgroundColor="red" opacity="0.5"  (loaded)="pageLoaded($event)">
-    <JWPlayerWeb [src]="srcN" (loaded)="onLoadd($event)"></JWPlayerWeb>
-</GridLayout>
+    <GridLayout width="100%">
+        <JWPlayerWeb [src]="srcN" (loaded)="onLoadd($event)" (play)="onPl($event)" (onPlay)="onPl($event)"></JWPlayerWeb>
+    </GridLayout>
 </StackLayout>
