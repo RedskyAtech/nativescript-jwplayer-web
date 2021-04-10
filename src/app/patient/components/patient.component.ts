@@ -1,9 +1,7 @@
 
 import { Component } from "@angular/core";
+import { Screen } from "@nativescript/core";
 import { registerElement } from "@nativescript/angular";
-import { ApplicationSettings, Frame, Observable, Page, Screen, WebView } from "@nativescript/core";
-import { topmost } from "@nativescript/core/ui/frame/frame-common";
-import { WebViewInterface } from "nativescript-webview-interface"
 
 registerElement('JWPlayerWeb', () => require('nativescript-jwplayer-web').JWPlayerWeb)
 
@@ -14,29 +12,41 @@ registerElement('JWPlayerWeb', () => require('nativescript-jwplayer-web').JWPlay
 })
 
 export class PatientComponent {
+
     src: any = {};
-    webViewSrc: any;
-    n: any;
-    webInt: WebViewInterface;
     jww;
-    srcN;
 
-    constructor(private page: Page) {
-        this.src.url = "https://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8"
-        this.src.title = "Title"
-        this.src.description = "Description"
-        this.srcN = { controls: true };
-
-//         if(topmost().page){
-//             topmost().page.on('onPlay',()=>{console.log('hapended2')})
-//         }
+    constructor() {
+        this.src = {
+            controls: true,
+            playlist: [{
+                file: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+                label: 'Nice Video'
+            },
+            {
+                file: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                label: 'Nice Video1'
+            },
+            {
+                file: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                label: 'Nice Video2'
+            }]
+        };
     }
 
+    onPlay(args) {
+        console.log('Video is playing');
+    }
 
-    onLoadd(args) {
+    onPause(args) {
+        console.log('Video is paused');
+    }
+
+    onLoaded(args) {
         this.jww = args.object;
-        this.resizePlayer({ width: (Screen.mainScreen.widthPixels / 2 * Screen.mainScreen.scale) + 'px', height: (Screen.mainScreen.heightPixels / 2 * Screen.mainScreen.scale) + 'px' });
-        this.jww.on('onPlay',(args)=>{console.log('uyuyuyuyuyuy')})
+        this.jww.on('ready', (args) => {
+            console.log('Player is ready')
+        })
     }
 
     triggerAd() {
@@ -47,7 +57,7 @@ export class PatientComponent {
 
     resizePlayer(args: { width: string, height: string }) {
         if (this.jww) {
-            // this.jww.emit('resizePlayer', args)
+            this.jww.emit('resizePlayer', { width: (Screen.mainScreen.widthPixels / 2 * Screen.mainScreen.scale) + 'px', height: (Screen.mainScreen.heightPixels / 2 * Screen.mainScreen.scale) + 'px' });
         }
     }
 
@@ -61,10 +71,6 @@ export class PatientComponent {
         if (this.jww) {
             this.jww.pause();
         }
-    }
-
-    onPl(args) {
-        console.log('PLPLPLPLPLPL')
     }
 
 }

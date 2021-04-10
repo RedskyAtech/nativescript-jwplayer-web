@@ -30,7 +30,9 @@
   "scripts": {
     "lint": "tslint \"src/**/*.ts\"",
     "android": "tns run android --bundle --env.aot --env.uglify --no-hmr",
-    "ios": "tns run ios --bundle --env.aot --env.uglify --no-hmr"
+    "ios": "tns run ios --bundle --env.aot --env.uglify --no-hmr",
+    "addPlugin": "cd nativescript-jwplayer-web/src && rm -r package && npm i && npm run tsc && mkdir package && mv *.js ./package && cp package.json ./package && cd ../../ && npm i ./nativescript-jwplayer-web/src/package --save",
+    "addPluginAndRun": "cd ./nativescript-jwplayer-web/src && rm -r package && npm i && npm run tsc && mkdir package && mv *.js ./package && cp package.json ./package && cd ../../ && npm i ./nativescript-jwplayer-web/src/package --save && tns run ios --bundle"
   },
   "dependencies": {
     "@angular/animations": "~11.0.0",

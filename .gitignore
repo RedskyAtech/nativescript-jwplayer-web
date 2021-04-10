@@ -3,6 +3,8 @@ hooks/
 node_modules/
 platforms/
 
+!nativescript-jwplayer-web/
+
 # NativeScript Template
 *.js.map
 *.js

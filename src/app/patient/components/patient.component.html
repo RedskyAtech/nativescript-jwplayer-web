@@ -3,6 +3,7 @@
 
 <StackLayout>
     <GridLayout width="100%">
-        <JWPlayerWeb [src]="srcN" (loaded)="onLoadd($event)" (play)="onPl($event)" (onPlay)="onPl($event)"></JWPlayerWeb>
+        <JWPlayerWeb [src]="src" (loaded)="onLoaded($event)" (play)="onPlay($event)" (pause)="onPause($event)">
+        </JWPlayerWeb>
     </GridLayout>
 </StackLayout>
