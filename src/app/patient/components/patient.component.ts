@@ -36,6 +36,9 @@ export class PatientComponent {
 
     onPlay(args) {
         console.log('Video is playing');
+        if (this.jww) {
+            this.jww.setMute();
+        }
     }
 
     onPause(args) {
@@ -70,6 +73,12 @@ export class PatientComponent {
     pause() {
         if (this.jww) {
             this.jww.pause();
+        }
+    }
+
+    next() {
+        if (this.jww) {
+            this.jww.next();
         }
     }
 
