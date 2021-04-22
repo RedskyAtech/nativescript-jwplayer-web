@@ -1,74 +1,71 @@
 {
-  "name": "@nativescript/template-drawer-navigation-ng",
-  "main": "main.js",
-  "displayName": "Navigation Drawer",
-  "templateType": "App template",
-  "version": "7.0.6",
-  "description": "NativeScript Application",
-  "author": "NativeScript Team <oss@nativescript.org>",
-  "license": "SEE LICENSE IN <your-license-filename>",
-  "publishConfig": {
-    "access": "public"
+  "_from": "file:nativescript-jwplayer-web-0.0.1.tgz",
+  "_id": "nativescript-jwplayer-web@0.0.1",
+  "_inBundle": false,
+  "_integrity": "sha512-bBLWF6Tg0I6WGg9ehIZ0tL3iFck3H7s6ZPMOf4QsZDzQCta0lXCYnHRIiY7xuRCJ1tBeGTJFKJryMcCZjyIpAw==",
+  "_location": "/nativescript-jwplayer-web",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "file",
+    "where": "/Users/redskyatech/Downloads/jw-ns-demo-wv 2",
+    "raw": "nativescript-jwplayer-web-0.0.1.tgz",
+    "rawSpec": "nativescript-jwplayer-web-0.0.1.tgz",
+    "saveSpec": "file:nativescript-jwplayer-web-0.0.1.tgz",
+    "fetchSpec": "/Users/redskyatech/Downloads/jw-ns-demo-wv 2/nativescript-jwplayer-web-0.0.1.tgz"
   },
-  "keywords": [
-    "nstudio",
-    "nativescript",
-    "mobile",
-    "angular",
-    "{N}",
-    "tns",
-    "template",
-    "drawer",
-    "navigation",
-    "category-general"
+  "_requiredBy": [
+    "#USER",
+    "/"
   ],
-  "repository": "<fill-your-repository-here>",
-  "homepage": "https://github.com/NativeScript/nativescript-app-templates",
+  "_resolved": "/Users/redskyatech/Downloads/jw-ns-demo-wv 2/nativescript-jwplayer-web-0.0.1.tgz",
+  "_shasum": "e00f26c2ebe7f6b920e5a09aeffaad0e24c0fc3f",
+  "_spec": "nativescript-jwplayer-web-0.0.1.tgz",
+  "_where": "/Users/redskyatech/Downloads/jw-ns-demo-wv 2",
+  "author": {
+    "name": "Redsky Advance Technology",
+    "email": "redsky.atech@gmail.com"
+  },
   "bugs": {
-    "url": "https://github.com/NativeScript/NativeScript/issues"
+    "url": "https://github.com/RedskyAtech/nativescript-jwplayer-web/issues"
   },
-  "scripts": {
-    "lint": "tslint \"src/**/*.ts\"",
-    "android": "tns run android --bundle --env.aot --env.uglify --no-hmr",
-    "ios": "tns run ios --bundle --env.aot --env.uglify --no-hmr",
-    "addPlugin": "cd nativescript-jwplayer-web/src && rm -r package && npm i && npm run tsc && mkdir package && mv *.js ./package && cp package.json ./package && cd ../../ && npm i ./nativescript-jwplayer-web/src/package --save",
-    "addPluginAndRun": "cd ./nativescript-jwplayer-web/src && rm -r package && npm i && npm run tsc && mkdir package && mv *.js ./package && cp package.json ./package && cd ../../ && npm i ./nativescript-jwplayer-web/src/package --save && tns run ios --bundle"
-  },
-  "dependencies": {
-    "@angular/animations": "~11.0.0",
-    "@angular/common": "~11.0.0",
-    "@angular/compiler": "~11.0.0",
-    "@angular/core": "~11.0.0",
-    "@angular/forms": "~11.0.0",
-    "@angular/http": "^7.2.16",
-    "@angular/platform-browser": "~11.0.0",
-    "@angular/platform-browser-dynamic": "~11.0.0",
-    "@angular/router": "~11.0.0",
-    "@nativescript/angular": "~11.0.0",
-    "@nativescript/camera": "^5.0.2",
-    "@nativescript/core": "~7.1.0",
-    "@nativescript/theme": "~2.3.0",
-    "nativescript": "^6.5.1",
-    "nativescript-jwplayer-web": "file:nativescript-jwplayer-web-0.0.1.tgz",
-    "nativescript-ui-listview": "^9.1.0",
-    "nativescript-videoplayer": "^5.0.1",
-    "nativescript-webview-interface": "^1.4.4",
-    "reflect-metadata": "~0.1.12",
-    "rxjs": "^6.6.0",
-    "zone.js": "~0.11.1"
-  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "JW Player Web for nativescript",
   "devDependencies": {
-    "@angular/compiler-cli": "~11.0.0",
-    "@nativescript/android": "7.0.1",
-    "@nativescript/ios": "7.0.6",
-    "@nativescript/types": "^7.2.0",
-    "@nativescript/webpack": "~4.0.0",
-    "@ngtools/webpack": "~11.0.0",
-    "codelyzer": "~6.0.0",
-    "node-sass": "^4.14.1",
-    "tslint": "~6.1.3",
     "typescript": "~4.0.0"
   },
-  "private": "true",
-  "readme": "NativeScript Application"
+  "homepage": "https://github.com/RedskyAtech/nativescript-jwplayer-web#readme",
+  "keywords": [
+    "Nativescript",
+    "JWPlayerWeb",
+    "JW Player Web"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "nativescript-jwplayer-web",
+  "nativescript": {
+    "platforms": {
+      "android": "7.0.0",
+      "ios": "7.0.0"
+    },
+    "plugin": {
+      "nan": "true",
+      "pan": "true",
+      "vue": "true",
+      "core3": "true",
+      "core4": "true",
+      "core6": "true",
+      "core7": "true",
+      "category": "Processing"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RedskyAtech/nativescript-jwplayer-web.git"
+  },
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "typings": "index.d.ts",
+  "version": "0.0.1"
 }
