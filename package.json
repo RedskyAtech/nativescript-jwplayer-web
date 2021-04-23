@@ -76,5 +76,5 @@
     "tsc": "tsc"
   },
   "typings": "index.d.ts",
-  "version": "1.0.3"
+  "version": "1.0.4"
 }
