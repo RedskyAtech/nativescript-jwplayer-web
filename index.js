@@ -1,5 +1,6 @@
-import { ApplicationSettings, WebView, isAndroid, Screen } from '@nativescript/core';
+import { Screen, WebView } from '@nativescript/core';
 import { WebViewInterface } from "nativescript-webview-interface";
+import { ApplicationSettings } from "@nativescript/core";
 import { JWPlayerWebCommon, srcProperty } from "./index.common";
 
 export class JWPlayerWeb extends JWPlayerWebCommon {
@@ -14,7 +15,8 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
             let controls = true;
             let width = Screen.mainScreen.widthPixels + 'px';
             let aspectratio = "16:9";
-            let link = "";
+            // let link = "https://cdn.jwplayer.com/libraries/qnWUZd2z.js";
+            let link = "https://cdn.jwplayer.com/libraries/u8vqQqxv.js";
 
             let playlist = [
                 {
@@ -23,7 +25,33 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
                 }
             ];
 
-            let advertisement = {};
+            // let playlist = [
+            //     {
+            //         file: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+            //         label: 'Nice Video'
+            //     },
+            //     {
+            //         file: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+            //         label: 'Nice Video1'
+            //     },
+            //     {
+            //         file: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+            //         label: 'Nice Video2'
+            //     }]
+            let advertisement = {
+                // "client": "vast",
+                // "adscheduleid": "Az87bY12",
+                // "schedule": [
+                //     {
+                //         "offset": "pre",
+                //         "tag": "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator="
+                //     },
+                //     {
+                //         "offset": "25%",
+                //         "tag": "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator="
+                //     },
+                // ]
+            };
 
             if (this.src) {
                 if (this.src.autostart != undefined) {
@@ -46,18 +74,12 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
                 }
                 if (this.src.playlist != undefined) {
                     playlist = this.src.playlist;
-                } else {
-                    console.warn(`Playing Default video, please remember to provide me with a playlist video ${String.fromCodePoint(0x1F605)}`)
                 }
                 if (this.src.advertising != undefined) {
                     advertisement = this.src.advertising;
-                } else {
-                    console.warn(`Wow,no ads,you seem like a rich one ${String.fromCodePoint(0x1F61C)}`)
                 }
-                if (this.src.link) {
+                if (this.src.link != undefined) {
                     link = this.src.link;
-                } else {
-                    throw new Error(`Please provide JW Player link, I am not able to move ahead ${String.fromCodePoint(0x1F62C)}`);
                 }
             }
 
@@ -277,20 +299,21 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
             
                     var player = jwplayer('myPlayer');
             
-                    var playerInstance = player.setup({
+                    let config={
                         playlist: ${JSON.stringify(playlist)},
                         advertising: ${JSON.stringify(advertisement)},
                         autostart: ${autostart},
                         floating: ${floating},
                         responsive: ${responsive},
                         controls: ${controls},
-                        width:${width},
-                        aspectratio: ${aspectratio}
-                    });
+                    };
+
+                    console.log('config::',config)
+                    var playerInstance = player.setup(config);
             
                     let oWebViewInterface = window.nsWebViewInterface;
             
-                    player.on('ready', function (args) { oWebViewInterface.emit('ready', args) })
+                    player.on('ready', function (args) { oWebViewInterface.emit('ready', config) })
                     player.on('setupError', function (args) { oWebViewInterface.emit('setupError', args) })
                     player.on('remove', function (args) { oWebViewInterface.emit('remove', args) })
                     player.on('adBidRequest', function (args) { oWebViewInterface.emit('adBidRequest', args) })
@@ -724,7 +747,7 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
                 setTimeout(() => {
                     this.isLiLoaded = true;
                     this.updateState();
-                    if (isAndroid) {
+                    if (li.android) {
                         let w = li.android
                         w.setWebViewClient(new android.webkit.WebViewClient());
                         w.setWebChromeClient(new android.webkit.WebChromeClient());
@@ -806,32 +829,38 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
         }
     }
     getMute() {
-        setTimeout(() => {
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getMute', null, (res) => {
+        // setTimeout(() => {
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getMute', null, (res) => {
+                    if (res) {
                         resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+                    } else {
+                        resolve(false);
+                    }
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
     }
     getVolume() {
-        setTimeout(() => {
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getVolume', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        // setTimeout(() => {
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getVolume', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
+                    console.log('err:', error)
                 });
-                return p;
-            }
-        }, 1)
+            });
+            console.log('PPPP:', p)
+            return p;
+        }
+        // }, 1)
     }
     setMute(state) {
         setTimeout(() => {
@@ -857,67 +886,67 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
         }, 1)
     }
     getPercentViewable() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getPercentViewable', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getPercentViewable', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getViewable() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getViewable', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getViewable', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getPosition() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getPosition', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getPosition', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getDuration() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getDuration', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getDuration', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     seek(position) {
@@ -930,147 +959,147 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
 
     }
     getFullscreen() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getFullscreen', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getFullscreen', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getHeight() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getHeight', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getHeight', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getWidth() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getWidth', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getWidth', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     setPlaylistItemCallback(callback) {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('setPlaylistItemCallback', [callback], (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('setPlaylistItemCallback', [callback], (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     removePlaylistItemCallback() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('removePlaylistItemCallback', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('removePlaylistItemCallback', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getPlaylistItemPromise(index) {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getPlaylistItemPromise', [index], (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getPlaylistItemPromise', [index], (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getQualityLevels() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getQualityLevels', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getQualityLevels', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getCurrentQuality() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getCurrentQuality', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getCurrentQuality', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getVisualQuality() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getVisualQuality', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getVisualQuality', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     setCurrentQuality(index) {
@@ -1083,19 +1112,19 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
 
     }
     getPlaybackRate() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getPlaybackRate', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getPlaybackRate', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     setPlaybackRate(rate) {
@@ -1117,52 +1146,52 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
 
     }
     getPlaylist() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getPlaylist', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getPlaylist', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getPlaylistItem() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getPlaylistItem', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getPlaylistItem', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
+            });
 
-                return p;
-            }
-        }, 1)
+            return p;
+        }
+        // }, 1)
 
     }
     getPlaylistIndex() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getPlaylistIndex', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getPlaylistIndex', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     load(playlist) {
@@ -1193,67 +1222,67 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
 
     }
     getState() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getState', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getState', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getAdBlock() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getAdBlock', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getAdBlock', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     pauseAd(state) {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('pauseAd', [state], (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('pauseAd', [state], (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     playAd(tag) {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('playAd', [tag], (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('playAd', [tag], (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     skipAd() {
@@ -1266,35 +1295,35 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
 
     }
     getAudioTracks() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getAudioTracks', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getAudioTracks', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getCurrentAudioTrack() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getCurrentAudioTrack', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getCurrentAudioTrack', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     setCurrentAudioTrack(index) {
@@ -1307,19 +1336,19 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
 
     }
     addButton({ img, tooltip, callback, id, btnClass }) {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('addButton', [img, tooltip, callback, id, btnClass], (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('addButton', [img, tooltip, callback, id, btnClass], (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     addCues(cues) {
@@ -1332,51 +1361,51 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
 
     }
     getControls() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getControls', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getControls', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getCues() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getCues', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getCues', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getSafeRegion() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getSafeRegion', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getSafeRegion', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     removeButton(id) {
@@ -1416,35 +1445,35 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
 
     }
     getCaptionsList() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getCaptionsList', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getCaptionsList', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     getCurrentCaptions() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getCurrentCaptions', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getCurrentCaptions', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     setCurrentCaptions(index) {
@@ -1457,19 +1486,19 @@ export class JWPlayerWeb extends JWPlayerWebCommon {
 
     }
     getBuffer() {
-        setTimeout(() => {
+        // setTimeout(() => {
 
-            if (this.webInt) {
-                let p = new Promise((resolve, reject) => {
-                    this.webInt.callJSFunction('getBuffer', null, (res) => {
-                        resolve(res);
-                    }, error => {
-                        reject(error);
-                    });
+        if (this.webInt) {
+            let p = new Promise((resolve, reject) => {
+                this.webInt.callJSFunction('getBuffer', null, (res) => {
+                    resolve(res);
+                }, error => {
+                    reject(error);
                 });
-                return p;
-            }
-        }, 1)
+            });
+            return p;
+        }
+        // }, 1)
 
     }
     stopCasting() {
