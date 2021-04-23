@@ -293,3 +293,9 @@ getBuffer();
 
 stopCasting();
 ```
+
+## Known issues
+
+1. With fullscreen event, there is always a chromium error. This is a known issue on chromium during fullscreen.
+
+2. Providing width in player configuration gives an error. However, height/width can be provided with resizePlayer() function.
